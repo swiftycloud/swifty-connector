@@ -50,10 +50,10 @@ export default {
 
   methods: {
     submitForm () {
-      this.loading = true
       this.emailErrorMessage = ''
       this.$refs['signUpForm'].validate(valid => {
         if (valid) {
+          this.loading = true
           this.customer.save().then(response => {
             this.customer.clear()
 
