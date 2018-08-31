@@ -1,0 +1,49 @@
+<template>
+  <div class="password-reset-form">
+    <el-form label-width="120px" ref="submitForm" :rules="rules" :model="form" @submit.native.prevent="submitForm()">
+      <el-form-item label="Your email:" prop="email">
+        <el-input placeholder="Email" type="email" v-model="form.email"></el-input>
+      </el-form-item>
+
+      <ul class="password-reset-button">
+        <li><el-button type="primary" native-type="submit">Send reset link</el-button></li>
+      </ul>
+    </el-form>
+  </div>
+</template>
+
+<script>
+export default {
+  data () {
+    return {
+      form: {
+        email: null
+      },
+
+      rules: {
+        email: [
+          { required: true, message: 'Please enter your email', trigger: 'blur' },
+          { type: 'email', message: 'Please input correct email address', trigger: 'blur' }
+        ]
+      }
+    }
+  },
+
+  methods: {
+    submitForm () {
+      this.$refs['submitForm'].validate(valid => {
+        if (valid) {
+          axios.post('/api/customers/password/link', this.form).then(response => {
+            this.$alert('We sent the link to the entered email', 'Done!', {
+              confirmButtonText: 'OK',
+              type: 'success',
+              center: true
+            })
+            this.form.email = null
+          })
+        }
+      })
+    }
+  }
+}
+</script>
