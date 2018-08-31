@@ -14,5 +14,6 @@ docker-compose up -d nginx mysql workspace
 docker-compose exec --user=laradock workspace bash
 composer install
 cp .env.example .env
-vi .env
+nano .env
+php artisan key:generate
 ```
