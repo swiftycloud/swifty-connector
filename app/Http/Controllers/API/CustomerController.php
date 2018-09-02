@@ -60,51 +60,52 @@ class CustomerController extends Controller
      */
     public function store(StoreCustomer $request)
     {
-        $customer = new Customer();
-        $customer->email = $request->email;
-        $customer->password = Hash::make($request->password);
-        $customer->name = $request->name;
+        $admd = new \GuzzleHttp\Client([
+            'base_uri' => env('API_ADMD_ENDPOINT')
+        ]);
 
-        // TODO: make hash temporary
-        $customer->hash = md5($request->email . time());
+        $response = $admd->post('login', [
+            'json' => [
+                'username' => env('API_USERNAME'),
+                'password' => env('API_PASSWORD')
+            ]
+        ]);
 
-        if ($customer->save()) {
-            $admd = new \GuzzleHttp\Client([
-                'base_uri' => env('API_ADMD_ENDPOINT')
-            ]);
+        if ($response->hasHeader('X-Subject-Token')) {
+            $token = $response->getHeader('X-Subject-Token')[0];
 
-            $response = $admd->post('login', [
+            $response = $admd->post('users', [
                 'json' => [
-                    'username' => env('API_USERNAME'),
-                    'password' => env('API_PASSWORD')
+                    'uid' => $request->email,
+                    'pass' => $request->password,
+                    'name' => $request->name
+                ],
+                'headers' => [
+                    'X-Auth-Token' => $token
                 ]
             ]);
 
-            if ($response->hasHeader('X-Subject-Token')) {
-                $token = $response->getHeader('X-Subject-Token')[0];
+            if ($response->getStatusCode() == 201) {
+                $data = json_decode($response->getBody()->getContents(), true);
 
-                $response = $admd->post('users', [
-                    'json' => [
-                        'uid' => $request->email,
-                        'password' => $request->password,
-                        'name' => $request->name
-                    ],
-                    'headers' => [
-                        'X-Auth-Token' => $token
-                    ]
-                ]);
+                $customer = new Customer();
+                $customer->email = $request->email;
+                $customer->password = Hash::make($request->password);
+                $customer->name = $request->name;
 
-                if ($response->getStatusCode() == 201) {
-                    $data = json_decode($response->getBody()->getContents(), true);
-                    $customer->swifty_id = $data['id'];
-                    $customer->save();
+                // TODO: make hash temporary
+                $customer->hash = md5($request->email . time());
+                $customer->swifty_id = $data['id'];
+                $customer->save();
+
+                if ($customer->save()) {
+                    Mail::to($request->email)->send(new ConfirmEmail($customer));
+                    return $customer;
+                } else {
+                    return false;
                 }
             }
-
-            Mail::to($request->email)->send(new ConfirmEmail($customer));
         }
-
-        return $customer;
     }
 
     /**
