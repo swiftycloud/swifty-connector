@@ -11,6 +11,7 @@ docker-compose up -d nginx mysql workspace
 
 ## Set Up Laravel
 ```bash
+chmod -R 777 ../storage ../bootstrap/cache
 docker-compose exec --user=laradock workspace bash
 composer install
 cp .env.example .env
