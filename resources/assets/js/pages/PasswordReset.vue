@@ -2,7 +2,7 @@
   <div class="password-reset">
     <el-card class="password-reset-card">
       <div slot="header" class="clearfix">
-        <span>Change password</span>
+        <span>Password reset</span>
       </div>
       <password-reset-form/>
     </el-card>

@@ -1,12 +1,12 @@
 <template>
   <div class="password-reset-form">
-    <el-form label-width="120px" ref="submitForm" :rules="rules" :model="form" @submit.native.prevent="submitForm()">
+    <el-form label-width="170px" ref="submitForm" :rules="rules" :model="form" @submit.native.prevent="submitForm()">
       <el-form-item label="Your email:" prop="email">
         <el-input placeholder="Email" type="email" v-model="form.email"></el-input>
       </el-form-item>
 
       <ul class="password-reset-button">
-        <li><el-button type="primary" native-type="submit">Send reset link</el-button></li>
+        <li><el-button type="primary" native-type="submit">Send Password Reset Link</el-button></li>
       </ul>
     </el-form>
   </div>
