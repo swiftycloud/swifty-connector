@@ -92,6 +92,7 @@ class CustomerController extends Controller
                 $customer->email = $request->email;
                 $customer->password = Hash::make($request->password);
                 $customer->name = $request->name;
+                $customer->subscribed = $request->subscribed;
 
                 // TODO: make hash temporary
                 $customer->hash = md5($request->email . time());

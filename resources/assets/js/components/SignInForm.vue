@@ -21,7 +21,7 @@ Contact: info@swifty.cloud
     </el-form>
 
     <ul class="sign-in-links">
-      <li><small><router-link :to="{ name: 'password-link' }">Don’t remember your password?</router-link></small></li>
+      <li><small><router-link :to="{ name: 'password-link' }">Forgot your password?</router-link></small></li>
       <li><router-link :to="{ name: 'signup' }">Don’t have an account? Sign up!</router-link></li>
     </ul>
   </div>

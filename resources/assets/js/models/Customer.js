@@ -6,7 +6,8 @@ export class Customer extends Model {
     return {
       email: '',
       password: '',
-      name: ''
+      name: '',
+      subscribed: false
     }
   }
 
