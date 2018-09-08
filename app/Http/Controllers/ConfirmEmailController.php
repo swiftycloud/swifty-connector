@@ -48,6 +48,20 @@ class ConfirmEmailController extends Controller
                         $customer->hash = null;
                         $customer->save();
 
+                        $sg = new \SendGrid(env('SENDGRID_API_KEY'));
+
+                        $name = explode(' ', $customer->name);
+
+                        $request_body = [
+                            [
+                                'email' => $customer->email,
+                                'first_name' => $name[0],
+                                'last_name' => isset($name[1]) ? $name[1] : null
+                            ]
+                        ];
+
+                        $sg->client->contactdb()->recipients()->post($request_body);
+
                         Mail::to($customer->email)->send(new \App\Mail\Welcome($customer));
                         return redirect('/signin/?confirmed=1');
                     } else {
