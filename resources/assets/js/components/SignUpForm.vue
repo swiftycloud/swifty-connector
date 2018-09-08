@@ -87,6 +87,8 @@ export default {
           this.loading = true
           this.customer.save().then(response => {
             this.customer.clear()
+            this.confirmEmail = null
+            this.emailConfirmErrorMessage = ''
 
             this.$alert('Please check your email for continue registration', 'Last step!', {
               confirmButtonText: 'OK',

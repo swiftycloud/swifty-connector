@@ -3,6 +3,7 @@
 namespace App\Mail;
 
 use App\Customer;
+use Sichikawa\LaravelSendgridDriver\SendGrid;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
@@ -11,7 +12,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 
 class Welcome extends Mailable
 {
-    use Queueable, SerializesModels;
+    use Queueable, SerializesModels, SendGrid;
 
     public $customer;
 
@@ -32,6 +33,17 @@ class Welcome extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.customers.welcome');
+        return $this->view('emails.dummy')
+                    ->sendgrid([
+                        'template_id' => env('SENDGRID_WELCOME_TPL'),
+                        'personalizations' => [
+                            [
+                                'dynamic_template_data' => [
+                                    'customer' => $this->customer->toArray(),
+                                    'button_url' => env('DASHBOARD_URL')
+                                ]
+                            ]
+                        ]
+                    ]);
     }
 }
