@@ -1,4 +1,4 @@
-<!-- 
+<!--
 
 © 2018 SwiftyCloud OÜ. All rights reserved.
 Contact: info@swifty.cloud
@@ -90,7 +90,7 @@ export default {
             this.confirmEmail = null
             this.emailConfirmErrorMessage = ''
 
-            this.$alert('Please check your email for continue registration', 'Last step!', {
+            this.$alert('Please check your mailbox for verification email', 'Last step!', {
               confirmButtonText: 'OK',
               type: 'success',
               center: true
@@ -103,7 +103,7 @@ export default {
             } else {
               this.$notify.error({
                 title: 'Error',
-                message: 'Something wrong. Try again.'
+                message: 'Something wrong. Please try again.'
               });
             }
           }).finally(() => {
