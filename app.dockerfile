@@ -14,3 +14,5 @@ RUN php -r "unlink('composer-setup.php');"
 
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash
 RUN apt-get install -y nodejs build-essential
+
+RUN npm i -g cross-env
