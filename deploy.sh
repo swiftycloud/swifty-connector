@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source .env
+
 COLOR="\033[1;34m"
 NC="\033[0m"
 
@@ -16,12 +18,17 @@ echo -e "${COLOR}# install or update composer dependency${NC}" &&
 docker-compose exec app composer install &&
 
 echo -e "${COLOR}# run database migrations${NC}" &&
-docker-compose exec app php artisan migrate &&
+docker-compose exec app php artisan migrate
 
-echo -e "${COLOR}# install or update nodejs dependency${NC}" &&
-docker-compose exec app npm install &&
+if [ $APP_ENV = "local" ]
+then
 
-echo -e "${COLOR}# build production assets${NC}" &&
-docker-compose exec app npm run prod &&
+  echo -e "${COLOR}# install or update nodejs dependency${NC}" &&
+  docker-compose exec app npm install &&
+
+  echo -e "${COLOR}# build production assets${NC}" &&
+  docker-compose exec app npm run prod
+
+fi
 
 echo -e "${COLOR}# all is done!${NC}"
