@@ -1,21 +1,27 @@
 # Swifty Connector
 
-## Set Up Laradock
+## Installation
 ```bash
-git submodule init
-git submodule update
-cd laradock
-cp env-example .env
-docker-compose up -d nginx mysql workspace
-```
+# clone the project from repo
+git clone https://gitlab.com/swiftyteam/swifty.connector.git
 
-## Set Up Laravel
-```bash
+# set up permissions
+cd swifty.connector
 chmod -R 777 ../storage ../bootstrap/cache
-docker-compose exec --user=laradock workspace bash
-composer install
+
+# set up config (important to specify APP_ENV=production for prod)
 cp .env.example .env
 nano .env
-php artisan key:generate
-php artisan migrate
+
+# generate key for encrypt
+docker-compose exec app php artisan key:generate
+
+# run deploy
+./deploy.sh
+```
+
+## Update
+```bash
+# just run
+./deploy.sh
 ```
