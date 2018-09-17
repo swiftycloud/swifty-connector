@@ -49,7 +49,7 @@ class CustomerController extends Controller
      */
     public function index()
     {
-        return Customer::get();
+        // ..
     }
 
     /**
@@ -90,7 +90,6 @@ class CustomerController extends Controller
 
                 $customer = new Customer();
                 $customer->email = $request->email;
-                $customer->password = Hash::make($request->password);
                 $customer->name = $request->name;
                 $customer->subscribed = $request->subscribed;
 

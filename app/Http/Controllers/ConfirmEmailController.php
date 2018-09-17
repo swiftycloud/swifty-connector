@@ -44,14 +44,8 @@ class ConfirmEmailController extends Controller
                     ]);
 
                     if ($response->getStatusCode() == 200) {
-                        $customer->confirmed = true;
-                        $customer->hash = null;
-                        $customer->save();
-
                         $sg = new \SendGrid(env('SENDGRID_API_KEY'));
-
                         $name = explode(' ', $customer->name);
-
                         $request_body = [
                             [
                                 'email' => $customer->email,
@@ -63,6 +57,9 @@ class ConfirmEmailController extends Controller
                         $sg->client->contactdb()->recipients()->post($request_body);
 
                         Mail::to($customer->email)->send(new \App\Mail\Welcome($customer));
+
+                        $customer->delete();
+
                         return redirect('/signin/?confirmed=1');
                     } else {
                         return 'Something wrong with account';

@@ -4,13 +4,13 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Customer extends Model
+class CustomerPasswordReset extends Model
 {
     protected $fillable = [
-        'email', 'name', 'hash', 'confirmed'
+        'email', 'token'
     ];
 
     protected $hidden = [
-        'hash'
+        'token'
     ];
 }
