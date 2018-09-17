@@ -9,10 +9,6 @@ RUN docker-php-ext-enable imagick mcrypt
 RUN docker-php-ext-install pdo_mysql
 RUN docker-php-ext-install zip
 
-RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-RUN php composer-setup.php --install-dir=/usr/bin --filename=composer
-RUN php -r "unlink('composer-setup.php');"
-
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash
 RUN apt-get install -y nodejs build-essential
 

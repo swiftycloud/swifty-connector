@@ -15,7 +15,7 @@ echo -e "${COLOR}# restart the containers if required${NC}" &&
 docker-compose up -d &&
 
 echo -e "${COLOR}# install or update composer dependency${NC}" &&
-docker-compose exec app composer install &&
+docker run --rm -v $(pwd):/app composer/composer install &&
 
 echo -e "${COLOR}# run database migrations${NC}" &&
 docker-compose exec app php artisan migrate
