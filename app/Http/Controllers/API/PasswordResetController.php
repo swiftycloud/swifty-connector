@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Customer;
+use App\CustomerPasswordReset;
 use App\Mail\PasswordResetEmail;
 
 use Illuminate\Http\Request;
@@ -15,23 +15,52 @@ class PasswordResetController extends Controller
     
     public function link(Request $request)
     {
-        $customer = Customer::whereEmail($request->email)->first();
+        $admd = new \GuzzleHttp\Client([
+            'base_uri' => env('API_ADMD_ENDPOINT')
+        ]);
 
-        if ($customer) {
-            $customer->hash = md5($customer->email . time());
-            $customer->save();
-            Mail::to($customer->email)->send(new PasswordResetEmail($customer));
+        $response = $admd->post('login', [
+            'json' => [
+                'username' => env('API_USERNAME'),
+                'password' => env('API_PASSWORD')
+            ]
+        ]);
+
+        if ($response->hasHeader('X-Subject-Token')) {
+            $token = $response->getHeader('X-Subject-Token')[0];
+
+            $response = $admd->get('users', [
+                'headers' => [
+                    'X-Auth-Token' => $token
+                ]
+            ]);
+
+            if ($response->getStatusCode() == 200) {
+                $users = json_decode($response->getBody()->getContents(), true);
+
+                foreach ($users as $user) {
+                    if ($user['uid'] == $request->email) {
+                        $password_reset = new CustomerPasswordReset;
+                        $password_reset->email = $request->email;
+                        $password_reset->token = md5($request->email . time());
+                        $password_reset->save();
+
+                        Mail::to($password_reset->email)->send(new PasswordResetEmail($password_reset));
+                        return ['status' => 'ok'];
+                    }
+                }
+            }
         }
 
-        return ['status' => 'ok'];
+        return ['status' => 'failed'];        
     }
 
     public function reset(Request $request)
     {
         if ($request->has('hash') && $request->has('password')) {
-            $customer = Customer::whereHash($request->hash)->first();
+            $password_reset = CustomerPasswordReset::whereToken($request->hash)->first();
 
-            if ($customer) {
+            if ($password_reset) {
                 $admd = new \GuzzleHttp\Client([
                     'base_uri' => env('API_ADMD_ENDPOINT')
                 ]);
@@ -46,28 +75,36 @@ class PasswordResetController extends Controller
                 if ($response->hasHeader('X-Subject-Token')) {
                     $token = $response->getHeader('X-Subject-Token')[0];
 
-                    $response = $admd->put('users/' . $customer->swifty_id . '/pass', [
-                        'json' => [
-                            'username' => $customer->swifty_id,
-                            'password' => $request->password
-                        ],
+                    $response = $admd->get('users', [
                         'headers' => [
                             'X-Auth-Token' => $token
                         ]
                     ]);
 
-                    if ($response->getStatusCode() == 201) {
-                        $customer->hash = null;
-                        $customer->password = Hash::make($request->password);
+                    if ($response->getStatusCode() == 200) {
+                        $users = json_decode($response->getBody()->getContents(), true);
 
-                        if ($customer->save()) {
-                            return ['status' => 'ok'];
-                        } else {
-                            return ['status' => 'error', 'message' => 'Customer info not saved'];
+                        foreach ($users as $user) {
+                            if ($user['uid'] == $password_reset->email) {
+                                $response = $admd->put('users/' . $user['id'] . '/pass', [
+                                    'json' => [
+                                        'username' => $user['id'],
+                                        'password' => $request->password
+                                    ],
+                                    'headers' => [
+                                        'X-Auth-Token' => $token
+                                    ]
+                                ]);
+
+                                if ($response->getStatusCode() == 201) {
+                                    CustomerPasswordReset::whereEmail($password_reset->email)->delete();
+                                    return ['status' => 'ok'];
+                                } else {
+                                    return ['status' => 'error', 'message' => 'Something wrong'];
+                                }
+                            }
                         }
-                    } else {
-                        return ['status' => 'error', 'message' => 'Something wrong'];
-                    }
+                    }                    
                 }
             } else {
                 return ['status' => 'error', 'message' => 'Link is broken'];

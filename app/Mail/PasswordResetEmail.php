@@ -2,7 +2,7 @@
 
 namespace App\Mail;
 
-use App\Customer;
+use App\CustomerPasswordReset;
 use Sichikawa\LaravelSendgridDriver\SendGrid;
 
 use Illuminate\Bus\Queueable;
@@ -14,16 +14,16 @@ class PasswordResetEmail extends Mailable
 {
     use Queueable, SerializesModels, SendGrid;
 
-    public $customer;
+    public $password_reset;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct(Customer $customer)
+    public function __construct(CustomerPasswordReset $password_reset)
     {
-        $this->customer = $customer;
+        $this->password_reset = $password_reset;
     }
 
     /**
@@ -39,8 +39,7 @@ class PasswordResetEmail extends Mailable
                         'personalizations' => [
                             [
                                 'dynamic_template_data' => [
-                                    'customer' => $this->customer->toArray(),
-                                    'password_reset_link' => url('/password/reset') . '/' . $this->customer->hash
+                                    'password_reset_link' => url('/password/reset') . '/' . $this->password_reset->token
                                 ]
                             ]
                         ]
