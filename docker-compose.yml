@@ -6,6 +6,7 @@ services:
       context: ./
       dockerfile: app.dockerfile
     working_dir: /var/www
+    restart: always
     volumes:
       - ./:/var/www
 
@@ -14,13 +15,18 @@ services:
       context: ./
       dockerfile: web.dockerfile
     working_dir: /var/www
+    restart: always
     volumes:
       - ./:/var/www
+      - certs:/etc/letsencrypt
+      - certs-data:/data/letsencrypt
     ports:
       - 80:80
+      - 443:443
 
   db:
     image: mysql:5.7
+    restart: always
     volumes:
       - dbdata:/var/lib/mysql
     environment:
@@ -31,3 +37,9 @@ services:
 
 volumes:
   dbdata:
+  certs:
+    external:
+      name: certs
+  certs-data:
+    external:
+      name: certs-data
