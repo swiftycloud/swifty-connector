@@ -24,12 +24,13 @@ sed -i 's/DOMAIN_NAME/mydomain.com/g' nginx.conf
 
 # and request a certificate for your domain
 # (replace DOMAIN_NAME with your domain)
-docker run -it --rm \
+docker run -t --rm \
   -v certs:/etc/letsencrypt \
   -v certs-data:/data/letsencrypt \
+  --net=host \
   deliverous/certbot \
   certonly \
-  --webroot --webroot-path=/data/letsencrypt \
+  --standalone \
   -d DOMAIN_NAME
 
 # run deploy
