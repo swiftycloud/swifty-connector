@@ -1,6 +1,7 @@
 # Swifty Connector
 
 ## Installation
+### Prepare
 ```bash
 # clone the project from repo
 git clone https://gitlab.com/swiftyteam/swifty.connector.git
@@ -16,7 +17,10 @@ nano .env
 # create volumes for certbot (if doesn't exists)
 docker volume create certs
 docker volume create certs-data
+```
 
+### With SSL
+```bash
 # if you need SSL, copy nginx config and 
 # replace DOMAIN_NAME with your domain
 cp nginx.conf.with-ssl nginx.conf
@@ -32,7 +36,16 @@ docker run -t --rm \
   certonly \
   --standalone \
   -d DOMAIN_NAME
+```
 
+### Without SSL
+```bash
+# if there is no need for SSL
+cp nginx.conf.without-ssl nginx.conf
+```
+
+### Final
+```bash
 # run deploy
 ./deploy.sh
 
