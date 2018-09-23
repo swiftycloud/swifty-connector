@@ -9,6 +9,7 @@ import Router from 'vue-router'
 import SignInUp from './pages/SignInUp'
 import PasswordLink from './pages/PasswordLink'
 import PasswordReset from './pages/PasswordReset'
+import SignUpSuccess from './pages/SignUpSuccess'
 
 Vue.use(Router)
 
@@ -19,6 +20,7 @@ export default new Router({
     { path: '/signin', name: 'signin', component: SignInUp },
     { path: '/signup', name: 'signup', component: SignInUp },
     { path: '/password/link', name: 'password-link', component: PasswordLink },
-    { path: '/password/reset/:hash', name: 'password-reset', component: PasswordReset }
+    { path: '/password/reset/:hash', name: 'password-reset', component: PasswordReset },
+    { path: '/signup/success', name: 'signup-success', component: SignUpSuccess }
   ]
 })

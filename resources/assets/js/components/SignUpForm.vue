@@ -90,11 +90,7 @@ export default {
             this.confirmEmail = null
             this.emailConfirmErrorMessage = ''
 
-            this.$alert('Please check your mailbox for verification email', 'Last step!', {
-              confirmButtonText: 'OK',
-              type: 'success',
-              center: true
-            })
+            this.$router.push({ name: 'signup-success' })
           }).catch(e => {
             let data = e.response.response.data
 
