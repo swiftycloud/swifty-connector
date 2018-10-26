@@ -20,25 +20,33 @@ class CustomerController extends Controller
             'base_uri' => env('API_ADMD_ENDPOINT')
         ]);
 
-        $response = $admd->post('login', [
-            'json' => [
-                'username' => $request->email,
-                'password' => $request->password
-            ]
-        ]);
+        try {
+            $response = $admd->post('login', [
+                'json' => [
+                    'username' => $request->email,
+                    'password' => $request->password
+                ]
+            ]);
 
-        if ($response->getStatusCode() == 200 && $response->hasHeader('X-Subject-Token')) {
-            $data = json_decode($response->getBody()->getContents(), true);
+            if ($response->getStatusCode() == 200 && $response->hasHeader('X-Subject-Token')) {
+                $data = json_decode($response->getBody()->getContents(), true);
 
-            return [
-                'status' => 'ok',
-                'token' => $response->getHeader('X-Subject-Token')[0],
-                'expires' => $data['expires'],
-                'redirect_to' => env('DASHBOARD_URL'),
-                'domain' => env('MAIN_DOMAIN')
-            ];
-        } else {
-            return ['status' => 'error', 'message' => 'Can not log in'];
+                return [
+                    'status' => 'ok',
+                    'token' => $response->getHeader('X-Subject-Token')[0],
+                    'expires' => $data['expires'],
+                    'redirect_to' => env('DASHBOARD_URL'),
+                    'domain' => env('MAIN_DOMAIN')
+                ];
+            } else {
+                return ['status' => 'error', 'message' => 'Can not log in'];
+            }
+        } catch (\GuzzleHttp\Exception\BadResponseException $e) {
+            if ($e->getResponse()->getStatusCode() == 401) {
+                return ['status' => 'error', 'message' => 'Incorrect email or password'];
+            } else {
+                return ['status' => 'error', 'message' => 'Something was wrong, try again'];
+            }
         }
     }
 

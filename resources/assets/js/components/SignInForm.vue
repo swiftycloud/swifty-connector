@@ -103,13 +103,11 @@ export default {
               setCookie('_domain', response.data.domain, { domain: response.data.domain })
 
               window.location.href = response.data.redirect_to
+            } else if (response.data.message) {
+              this.$message.error(response.data.message)
             }
           }).catch(error => {
-            if (error.response.status === 401) {
-              this.$message.error('Sign in was failed')
-            } else {
-              this.$message.error('Failed. Can not log in')
-            }
+            this.$message.error('Something was wrong... Try again')
           }).finally(() => {
             this.loading = false
           })
