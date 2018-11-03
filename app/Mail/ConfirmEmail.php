@@ -33,17 +33,26 @@ class ConfirmEmail extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.dummy')
-                    ->sendgrid([
-                        'template_id' => env('SENDGRID_VERIFICATION_TPL'),
-                        'personalizations' => [
-                            [
-                                'dynamic_template_data' => [
-                                    'customer' => $this->customer->toArray(),
-                                    'verify_link' => url('/customers/confirm') . '/' . $this->customer->hash
-                                ]
-                            ]
+        $message = $this->view('emails.customers.confirm')
+                        ->with([
+                            'customer' => $this->customer->toArray(),
+                            'verify_link' => url('/customers/confirm') . '/' . $this->customer->hash
+                        ]);
+
+        if (env('MAIL_DRIVER') == 'sendgrid') {
+            $message->sendgrid([
+                'template_id' => env('SENDGRID_VERIFICATION_TPL'),
+                'personalizations' => [
+                    [
+                        'dynamic_template_data' => [
+                            'customer' => $this->customer->toArray(),
+                            'verify_link' => url('/customers/confirm') . '/' . $this->customer->hash
                         ]
-                    ]);
+                    ]
+                ]
+            ]);
+        }
+
+        return $message;
     }
 }

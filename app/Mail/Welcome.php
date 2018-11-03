@@ -33,17 +33,26 @@ class Welcome extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.dummy')
-                    ->sendgrid([
-                        'template_id' => env('SENDGRID_WELCOME_TPL'),
-                        'personalizations' => [
-                            [
-                                'dynamic_template_data' => [
-                                    'customer' => $this->customer->toArray(),
-                                    'button_url' => env('DASHBOARD_URL')
-                                ]
-                            ]
+        $message = $this->view('emails.customers.welcome')
+                        ->with([
+                            'customer' => $this->customer->toArray(),
+                            'button_url' => env('DASHBOARD_URL')
+                        ]);
+
+        if (env('MAIL_DRIVER') == 'sendgrid') {
+            $message->sendgrid([
+                'template_id' => env('SENDGRID_WELCOME_TPL'),
+                'personalizations' => [
+                    [
+                        'dynamic_template_data' => [
+                            'customer' => $this->customer->toArray(),
+                            'button_url' => env('DASHBOARD_URL')
                         ]
-                    ]);
+                    ]
+                ]
+            ]);
+        }
+
+        return $message;
     }
 }

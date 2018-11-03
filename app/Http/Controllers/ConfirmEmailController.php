@@ -44,17 +44,19 @@ class ConfirmEmailController extends Controller
                     ]);
 
                     if ($response->getStatusCode() == 200) {
-                        $sg = new \SendGrid(env('SENDGRID_API_KEY'));
-                        $name = explode(' ', $customer->name);
-                        $request_body = [
-                            [
-                                'email' => $customer->email,
-                                'first_name' => $name[0],
-                                'last_name' => isset($name[1]) ? $name[1] : null
-                            ]
-                        ];
+                        if (env('MAIL_DRIVER') == 'sendgrid') {
+                            $sg = new \SendGrid(env('SENDGRID_API_KEY'));
+                            $name = explode(' ', $customer->name);
+                            $request_body = [
+                                [
+                                    'email' => $customer->email,
+                                    'first_name' => $name[0],
+                                    'last_name' => isset($name[1]) ? $name[1] : null
+                                ]
+                            ];
 
-                        $sg->client->contactdb()->recipients()->post($request_body);
+                            $sg->client->contactdb()->recipients()->post($request_body);
+                        }
 
                         Mail::to($customer->email)->send(new \App\Mail\Welcome($customer));
 

@@ -79,7 +79,7 @@ export default {
               })
             }
           }).catch(() => {
-            this.$alert('Something wrong', 'Error', {
+            this.$alert('Something was wrong', 'Error', {
               confirmButtonText: 'OK',
               type: 'error',
               center: true
