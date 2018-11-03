@@ -1,5 +1,5 @@
 <template>
-  <div class="password-reset-form">
+  <div class="password-reset-form" v-loading="loading">
     <el-form label-width="170px" ref="submitForm" :rules="rules" :model="form" @submit.native.prevent="submitForm()">
       <el-form-item label="Your email:" prop="email">
         <el-input placeholder="Email" type="email" v-model="form.email"></el-input>
@@ -16,6 +16,8 @@
 export default {
   data () {
     return {
+      loading: false,
+
       form: {
         email: null
       },
@@ -33,6 +35,7 @@ export default {
     submitForm () {
       this.$refs['submitForm'].validate(valid => {
         if (valid) {
+          this.loading = true
           axios.post('/api/customers/password/link', this.form).then(response => {
             this.$alert('We sent the link to the entered email', 'Done!', {
               confirmButtonText: 'OK',
@@ -40,6 +43,14 @@ export default {
               center: true
             })
             this.form.email = null
+          }).catch(() => {
+            this.$alert('Something was wrong', 'Error', {
+              confirmButtonText: 'OK',
+              type: 'error',
+              center: true
+            })
+          }).finally(() => {
+            this.loading = false
           })
         }
       })

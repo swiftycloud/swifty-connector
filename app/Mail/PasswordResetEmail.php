@@ -33,16 +33,24 @@ class PasswordResetEmail extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.dummy')
-                    ->sendgrid([
-                        'template_id' => env('SENDGRID_PASSWORD_RESET_TPL'),
-                        'personalizations' => [
-                            [
-                                'dynamic_template_data' => [
-                                    'password_reset_link' => url('/password/reset') . '/' . $this->password_reset->token
-                                ]
-                            ]
+        $message = $this->view('emails.customers.password')
+                        ->with([
+                            'password_reset_link' => url('/password/reset') . '/' . $this->password_reset->token
+                        ]);
+
+        if (env('MAIL_DRIVER') == 'sendgrid') {
+            $message->sendgrid([
+                'template_id' => env('SENDGRID_PASSWORD_RESET_TPL'),
+                'personalizations' => [
+                    [
+                        'dynamic_template_data' => [
+                            'password_reset_link' => url('/password/reset') . '/' . $this->password_reset->token
                         ]
-                    ]);
+                    ]
+                ]
+            ]);
+        }
+
+        return $message;
     }
 }
