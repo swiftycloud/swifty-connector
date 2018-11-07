@@ -46,6 +46,9 @@ cp nginx.conf.without-ssl nginx.conf
 
 ### Final
 ```bash
+# copy email templates
+cp -pri resources/views/emails/examples/* resources/views/emails/customers/
+
 # run deploy
 ./deploy.sh
 
