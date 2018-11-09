@@ -21,7 +21,7 @@ Contact: info@swifty.cloud
         <el-input placeholder="Password" type="password" v-model="customer.password"></el-input>
       </el-form-item>
 
-      <el-form-item label label-width="0px" class="checkboxes" :error="acceptErrorMessage" :show-message="!!acceptErrorMessage">
+      <el-form-item label label-width="0px" class="checkboxes">
         <el-checkbox label="terms_and_privacy" v-model="acceptTermsAndPrivacy">I accept the Terms of Service and Privacy Policy.</el-checkbox>
       </el-form-item>
 

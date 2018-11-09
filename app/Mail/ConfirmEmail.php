@@ -34,6 +34,7 @@ class ConfirmEmail extends Mailable
     public function build()
     {
         $message = $this->view('emails.customers.confirm')
+                        ->subject('Завершение регистрации в Swifty')
                         ->with([
                             'customer' => $this->customer->toArray(),
                             'verify_link' => url('/customers/confirm') . '/' . $this->customer->hash
