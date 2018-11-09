@@ -34,6 +34,7 @@ class Welcome extends Mailable
     public function build()
     {
         $message = $this->view('emails.customers.welcome')
+                        ->subject('Добро пожаловать в Swifty')
                         ->with([
                             'customer' => $this->customer->toArray(),
                             'button_url' => env('DASHBOARD_URL')
