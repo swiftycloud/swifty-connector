@@ -34,7 +34,7 @@ class PasswordResetEmail extends Mailable
     public function build()
     {
         $message = $this->view('emails.customers.password')
-                        ->subject('Восстановление пароля в Swifty')
+                        ->subject('Swifty: смена пароля')
                         ->with([
                             'password_reset_link' => url('/password/reset') . '/' . $this->password_reset->token
                         ]);
