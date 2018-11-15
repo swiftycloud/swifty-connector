@@ -16,9 +16,16 @@ class CustomerController extends Controller
 
     public function login(Request $request)
     {
-        $admd = new \GuzzleHttp\Client([
+        $params = [
             'base_uri' => env('API_ADMD_ENDPOINT')
-        ]);
+        ];
+
+        if (env('VERIFY_SSL') == false) {
+            $params['curl'] = array( CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => false );
+            $params['verify'] = false;
+        }
+
+        $admd = new \GuzzleHttp\Client($params);
 
         try {
             $response = $admd->post('login', [
@@ -68,13 +75,20 @@ class CustomerController extends Controller
      */
     public function store(StoreCustomer $request)
     {
-        $admd = new \GuzzleHttp\Client([
+        $params = [
             'base_uri' => env('API_ADMD_ENDPOINT')
-        ]);
+        ];
+
+        if (env('VERIFY_SSL') == false) {
+            $params['curl'] = array( CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => false );
+            $params['verify'] = false;
+        }
+
+        $admd = new \GuzzleHttp\Client($params);
 
         $response = $admd->post('login', [
             'json' => [
-                'username' => env('API_USERNAME'),
+                'username' => env('API_USERNAME') . 'test',
                 'password' => env('API_PASSWORD')
             ]
         ]);
