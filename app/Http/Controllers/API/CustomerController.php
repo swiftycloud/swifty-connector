@@ -88,7 +88,7 @@ class CustomerController extends Controller
 
         $response = $admd->post('login', [
             'json' => [
-                'username' => env('API_USERNAME') . 'test',
+                'username' => env('API_USERNAME'),
                 'password' => env('API_PASSWORD')
             ]
         ]);
