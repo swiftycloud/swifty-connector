@@ -15,9 +15,16 @@ class PasswordResetController extends Controller
     
     public function link(Request $request)
     {
-        $admd = new \GuzzleHttp\Client([
+        $params = [
             'base_uri' => env('API_ADMD_ENDPOINT')
-        ]);
+        ];
+
+        if (env('VERIFY_SSL') == false) {
+            $params['curl'] = array( CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => false );
+            $params['verify'] = false;
+        }
+
+        $admd = new \GuzzleHttp\Client($params);
 
         $response = $admd->post('login', [
             'json' => [
