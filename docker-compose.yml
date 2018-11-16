@@ -35,6 +35,13 @@ services:
       - "MYSQL_PASSWORD=${DB_PASSWORD}"
       - "MYSQL_ROOT_PASSWORD=${DB_PASSWORD}"
 
+  postfix:
+    image: catatnight/postfix
+    restart: always
+    environment:
+      - "maildomain=${MAIL_DOMAIN}"
+      - "smtp_user=${MAIL_USERNAME}:${MAIL_PASSWORD}"
+
 volumes:
   dbdata:
   certs:
