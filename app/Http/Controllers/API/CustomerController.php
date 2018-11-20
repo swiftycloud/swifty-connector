@@ -86,46 +86,54 @@ class CustomerController extends Controller
 
         $admd = new \GuzzleHttp\Client($params);
 
-        $response = $admd->post('login', [
-            'json' => [
-                'username' => env('API_USERNAME'),
-                'password' => env('API_PASSWORD')
-            ]
-        ]);
-
-        if ($response->hasHeader('X-Subject-Token')) {
-            $token = $response->getHeader('X-Subject-Token')[0];
-
-            $response = $admd->post('users', [
+        try {
+            $response = $admd->post('login', [
                 'json' => [
-                    'uid' => $request->email,
-                    'pass' => $request->password,
-                    'name' => $request->name
-                ],
-                'headers' => [
-                    'X-Auth-Token' => $token
+                    'username' => env('API_USERNAME'),
+                    'password' => env('API_PASSWORD')
                 ]
             ]);
 
-            if ($response->getStatusCode() == 201) {
-                $data = json_decode($response->getBody()->getContents(), true);
+            if ($response->hasHeader('X-Subject-Token')) {
+                $token = $response->getHeader('X-Subject-Token')[0];
 
-                $customer = new Customer();
-                $customer->email = $request->email;
-                $customer->name = $request->name;
-                $customer->subscribed = $request->subscribed;
+                $response = $admd->post('users', [
+                    'json' => [
+                        'uid' => $request->email,
+                        'pass' => $request->password,
+                        'name' => $request->name
+                    ],
+                    'headers' => [
+                        'X-Auth-Token' => $token
+                    ]
+                ]);
 
-                // TODO: make hash temporary
-                $customer->hash = md5($request->email . time());
-                $customer->swifty_id = $data['id'];
-                $customer->save();
+                if ($response->getStatusCode() == 201) {
+                    $data = json_decode($response->getBody()->getContents(), true);
 
-                if ($customer->save()) {
-                    Mail::to($request->email)->send(new ConfirmEmail($customer));
-                    return $customer;
-                } else {
-                    return false;
+                    $customer = new Customer();
+                    $customer->email = $request->email;
+                    $customer->name = $request->name;
+                    $customer->subscribed = $request->subscribed;
+
+                    // TODO: make hash temporary
+                    $customer->hash = md5($request->email . time());
+                    $customer->swifty_id = $data['id'];
+                    $customer->save();
+
+                    if ($customer->save()) {
+                        Mail::to($request->email)->send(new ConfirmEmail($customer));
+                        return $customer;
+                    } else {
+                        return false;
+                    }
                 }
+            }
+        } catch (\GuzzleHttp\Exception\BadResponseException $e) {
+            if ($e->getResponse()->getStatusCode() == 409) {
+                return response()->json(['errors' => ['email' => ['User already exists']]], 409);
+            } else {
+                return response()->json([], $e->getResponse()->getStatusCode());
             }
         }
     }
