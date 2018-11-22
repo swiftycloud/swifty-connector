@@ -14,9 +14,6 @@ Contact: info@swifty.cloud
       <el-form-item label="Email:" prop="email" :error="emailErrorMessage" :show-message="!!emailErrorMessage">
         <el-input placeholder="Email" type="email" v-model="customer.email"></el-input>
       </el-form-item>
-      <el-form-item label="Confirm email:" required :error="emailConfirmErrorMessage" :show-message="!!emailConfirmErrorMessage">
-        <el-input placeholder="Email" type="email" v-model="confirmEmail"></el-input>
-      </el-form-item>
       <el-form-item label="Password:" prop="password">
         <el-input placeholder="Password" type="password" v-model="customer.password"></el-input>
       </el-form-item>
@@ -44,7 +41,6 @@ export default {
     return {
       loading: false,
       customer: new Customer,
-      confirmEmail: null,
       acceptTermsAndPrivacy: false,
 
       rules: {
@@ -57,25 +53,7 @@ export default {
         ]
       },
 
-      emailErrorMessage: '',
-      emailConfirmErrorMessage: ''
-    }
-  },
-
-  watch: {
-    confirmEmail: function () {
-      if (this.confirmEmail !== this.customer.email) {
-        this.emailConfirmErrorMessage = 'Email addresses do not match'
-      } else {
-        this.emailConfirmErrorMessage = ''
-      }
-    },
-    'customer.email': function () {
-      if (this.confirmEmail !== this.customer.email) {
-        this.emailConfirmErrorMessage = 'Email addresses do not match'
-      } else {
-        this.emailConfirmErrorMessage = ''
-      }
+      emailErrorMessage: ''
     }
   },
 
@@ -83,13 +61,10 @@ export default {
     submitForm () {
       this.emailErrorMessage = ''
       this.$refs['signUpForm'].validate(valid => {
-        if (valid && this.confirmEmail === this.customer.email) {
+        if (valid) {
           this.loading = true
           this.customer.save().then(response => {
             this.customer.clear()
-            this.confirmEmail = null
-            this.emailConfirmErrorMessage = ''
-
             this.$router.push({ name: 'signup-success' })
           }).catch(e => {
             let data = e.response.response.data
