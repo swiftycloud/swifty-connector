@@ -1,6 +1,7 @@
 /node_modules
 /public/hot
 /public/storage
+/public/img/logo*.svg
 /storage/*.key
 /vendor
 /resources/views/emails/customers/*
