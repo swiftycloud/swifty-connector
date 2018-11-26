@@ -14,6 +14,10 @@ chmod -R 777 storage bootstrap/cache
 cp .env.example .env
 nano .env
 
+# copy default or your logo
+cp public/img/logo.svg.example public/img/logo.svg
+cp public/img/logo-white.svg.example public/img/logo-white.svg
+
 # create volumes for certbot (if doesn't exists)
 docker volume create certs
 docker volume create certs-data
