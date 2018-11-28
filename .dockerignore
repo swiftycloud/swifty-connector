@@ -13,3 +13,4 @@ README.md
 deploy.sh
 docker-compose*.yml
 nginx*.conf
+.env
