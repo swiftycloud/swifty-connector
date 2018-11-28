@@ -1,3 +1,3 @@
-FROM nginx:1.10
+FROM nginx:1.15
 
-ADD nginx.conf /etc/nginx/conf.d/default.conf
+COPY ./public /var/www/public
