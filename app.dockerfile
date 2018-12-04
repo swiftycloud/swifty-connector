@@ -16,3 +16,7 @@ RUN npm i -g cross-env
 
 WORKDIR /var/www
 COPY . /var/www
+
+RUN chown -R 33:33 /var/www/bootstrap/cache
+RUN php artisan cache:clear
+RUN php artisan config:clear
