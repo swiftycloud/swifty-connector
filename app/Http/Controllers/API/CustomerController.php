@@ -52,7 +52,7 @@ class CustomerController extends Controller
             if ($e->getResponse()->getStatusCode() == 401) {
                 return ['status' => 'error', 'message' => 'Incorrect email or password'];
             } else {
-                return ['status' => 'error', 'message' => 'Something was wrong, try again'];
+                return response()->json(['status' => 'error', 'message' => 'Something was wrong, try again'], 418);
             }
         }
     }
